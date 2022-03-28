@@ -156,7 +156,7 @@ def display_options(df):
                         
                 adjust_text(anno_ls, ax = ax)
 
-                plt.legend(bbox_to_anchor = (1.01, 1.))
+                plt.legend(bbox_to_anchor = (1.05, 1.))
                 
                 st.pyplot(f)
 
