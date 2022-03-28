@@ -10,6 +10,25 @@ import streamlit as st
 from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode, JsCode
 
 def display_options(df):
+        # Get columns with specific dtypes
+        all_columns = df.columns.values
+        # Get columns with numeric data
+        numeric_columns = []
+        # Get columns with string data
+        alphabetic_columns = []
+        short_alpha_columns = []
+        short_alpha_columns.append('None')
+        
+        for col in all_columns:
+                if df[col].dtype == object:
+                        alphabetic_columns.append(col)
+                else:
+                        numeric_columns.append(col)
+
+        for alpha in alphabetic_columns:
+                if df[alpha].nunique() < 10:
+                        short_alpha_columns.append(alpha)
+                                
         # Side bar contents
         # Allow user to select rows for annotation
         st.sidebar.subheader("Selection options")
@@ -217,15 +236,6 @@ def main():
         # Have user upload a file to plot
         data_file = st.file_uploader('Upload CSV or Excel file', type = ['csv', 'xlsx', 'xls'])
 
-        # Get all columns
-        all_columns = []
-        # Get columns with numeric data
-        numeric_columns = []
-        # Get columns with string data
-        alphabetic_columns = []
-        short_alpha_columns = []
-        short_alpha_columns.append('None')
-
         if data_file is not None:
                 # To see details
                 file_details = {'filename': data_file.name,
@@ -237,18 +247,6 @@ def main():
                         df = pd.read_csv(data_file)
                 elif data_file.name.endswith('xlsx') or data_file.name.endswith('xls'):
                         df = pd.ExcelFile(data_file).parse()
-
-                # Get columns with specific dtypes
-                all_columns = df.columns.values
-                for col in all_columns:
-                        if df[col].dtype == object:
-                                alphabetic_columns.append(col)
-                        else:
-                                numeric_columns.append(col)
-
-                for alpha in alphabetic_columns:
-                        if df[alpha].nunique() < 10:
-                                short_alpha_columns.append(alpha)
                                 
                 display_options(df)
                  
