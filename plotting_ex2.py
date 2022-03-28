@@ -140,7 +140,6 @@ def display_options(df):
                 if '%' in y_selection:
                         ax.set_ylim([0, 100])
 
-                plt.legend(bbox_to_anchor = (1, 1.01))
                 # Annotate data points
                 anno_ls = []
                 selected = grid_response['selected_rows']
@@ -152,6 +151,9 @@ def display_options(df):
                                 anno_ls.append(anno)
                         
                 adjust_text(anno_ls, ax = ax)
+
+                plt.legend(bbox_to_anchor = (1, 1.01))
+                
                 st.pyplot(f)
 
         if plot_type_choice == 'bar':
