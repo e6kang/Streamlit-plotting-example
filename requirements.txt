@@ -1,0 +1,8 @@
+streamlit
+base64 
+pandas
+numpy
+seaborn
+math
+adjustText
+st_aggrid
