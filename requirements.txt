@@ -1,7 +1,7 @@
-streamlit
+streamlit==1.2.0
 pandas
 numpy
 seaborn
-adjustText
-streamlit-aggrid
+adjustText==0.7.3
+st_aggrid==0.2.3
 openpyxl
