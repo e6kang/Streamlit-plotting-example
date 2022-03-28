@@ -4,3 +4,4 @@ numpy
 seaborn
 adjustText
 streamlit-aggrid
+openpyxl
