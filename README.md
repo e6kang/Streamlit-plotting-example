@@ -6,10 +6,15 @@ A learning exercise using streamlit to allow a user to upload an excel or csv fi
 Uses Ag-Grid to display the file that has been uploaded.
 
 Once a file has been uploaded, allow user to select the plot type:
-  Scatter
-  Bar
-  Box
-  Histogram
+
+	-Scatter
+
+	-Bar
+
+	-Box
+
+	-Histogram
+
 Allow user to determine axes and data groups
 
 When applicable, allow user to annotate the plot. Desired annotations can be chosen by clicking on the check boxes in the displayed Ag-Grid.
