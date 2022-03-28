@@ -250,4 +250,5 @@ def main():
                                 
                 display_options(df)
                  
-main()
+if __name__ == '__main__':
+	main()
