@@ -9,46 +9,7 @@ from adjustText import adjust_text
 import streamlit as st
 from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode, JsCode
 
-def main():
-
-        st.title('Plotting from pandas df')
-        
-        # Have user upload a file to plot
-        data_file = st.file_uploader('Upload CSV or Excel file', type = ['csv', 'xlsx', 'xls'])
-
-        # Get all columns
-        all_columns = []
-        # Get columns with numeric data
-        numeric_columns = []
-        # Get columns with string data
-        alphabetic_columns = []
-        short_alpha_columns = []
-        short_alpha_columns.append('None')
-
-        if data_file is not None:
-                # To see details
-                file_details = {'filename': data_file.name,
-                                'filetype': data_file.type,
-                                'filesize': data_file.size}
-                
-                data_file_name = data_file.name.split('.')[0]
-                if data_file.name.endswith('csv'):
-                        df = pd.read_csv(data_file)
-                elif data_file.name.endswith('xlsx') or data_file.name.endswith('xls'):
-                        df = pd.ExcelFile(data_file).parse()
-
-                # Get columns with specific dtypes
-                all_columns = df.columns.values
-                for col in all_columns:
-                        if df[col].dtype == object:
-                                alphabetic_columns.append(col)
-                        else:
-                                numeric_columns.append(col)
-
-                for alpha in alphabetic_columns:
-                        if df[alpha].nunique() < 10:
-                                short_alpha_columns.append(alpha)
-
+def display_options(df):
         # Side bar contents
         # Allow user to select rows for annotation
         st.sidebar.subheader("Selection options")
@@ -244,5 +205,51 @@ def main():
                 # Make a histogram
                 sns.histplot(data = df, x = x_selection, bins = bin_slider)
                 st.pyplot(f)
+
+###################################################################################################################################
+# Main function
+###################################################################################################################################
+
+def main():
+
+        st.title('Plotting from pandas df')
+        
+        # Have user upload a file to plot
+        data_file = st.file_uploader('Upload CSV or Excel file', type = ['csv', 'xlsx', 'xls'])
+
+        # Get all columns
+        all_columns = []
+        # Get columns with numeric data
+        numeric_columns = []
+        # Get columns with string data
+        alphabetic_columns = []
+        short_alpha_columns = []
+        short_alpha_columns.append('None')
+
+        if data_file is not None:
+                # To see details
+                file_details = {'filename': data_file.name,
+                                'filetype': data_file.type,
+                                'filesize': data_file.size}
+                
+                data_file_name = data_file.name.split('.')[0]
+                if data_file.name.endswith('csv'):
+                        df = pd.read_csv(data_file)
+                elif data_file.name.endswith('xlsx') or data_file.name.endswith('xls'):
+                        df = pd.ExcelFile(data_file).parse()
+
+                # Get columns with specific dtypes
+                all_columns = df.columns.values
+                for col in all_columns:
+                        if df[col].dtype == object:
+                                alphabetic_columns.append(col)
+                        else:
+                                numeric_columns.append(col)
+
+                for alpha in alphabetic_columns:
+                        if df[alpha].nunique() < 10:
+                                short_alpha_columns.append(alpha)
+                                
+                display_options(df)
                  
 main()
