@@ -124,6 +124,7 @@ def display_options(df):
 
                 ymin = df[y_selection].min()
                 ymax = df[y_selection].max()
+                yrange = ymax - ymin
 
                 # Rotate xlabels if data type is string
                 if df[x_selection].dtypes == 'object':
@@ -133,9 +134,12 @@ def display_options(df):
                 else:
                         xmin = df[x_selection].min()
                         xmax = df[x_selection].max()
+                        xrange = xmax - xmin
 
-                        ax.set_xlim([xmin - 10*math.ceil(abs(xmin)), xmax*1.1])
-                        ax.set_ylim([ymin - 10*math.ceil(abs(ymin)), ymax*1.1])
+                        #ax.set_xlim([xmin - 10*math.ceil(abs(xmin)), xmax*1.1])
+                        #ax.set_ylim([ymin - 10*math.ceil(abs(ymin)), ymax*1.1])
+                        ax.set_xlim([xmin - 0.2*xrange, xmax + 0.2*xrange])
+                        ax.set_ylim([xmin - 0.2*yrange, xmax + 0.2*yrange])
 
                 if '%' in y_selection:
                         ax.set_ylim([0, 100])
