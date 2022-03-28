@@ -3,4 +3,4 @@ pandas
 numpy
 seaborn
 adjustText
-st_aggrid
+streamlit-aggrid
