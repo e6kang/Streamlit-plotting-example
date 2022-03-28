@@ -139,7 +139,7 @@ def display_options(df):
                         #ax.set_xlim([xmin - 10*math.ceil(abs(xmin)), xmax*1.1])
                         #ax.set_ylim([ymin - 10*math.ceil(abs(ymin)), ymax*1.1])
                         ax.set_xlim([xmin - 0.2*xrange, xmax + 0.2*xrange])
-                        ax.set_ylim([xmin - 0.2*yrange, xmax + 0.2*yrange])
+                        ax.set_ylim([ymin - 0.2*yrange, ymax + 0.2*yrange])
 
                 if '%' in y_selection:
                         ax.set_ylim([0, 100])
