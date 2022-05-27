@@ -83,7 +83,7 @@ def display_options(df):
                 df,
                 gridOptions=gridOptions,
                 height=300,
-                data_return_mode='AS_INPUT',
+                data_return_mode='FILTERED_AND_SORTED',
                 update_mode='MODEL_CHANGED',
                 fit_columns_on_grid_load=False,
                 allow_unsafe_jscode=True, #Set it to True to allow jsfunction to be injected
@@ -113,29 +113,32 @@ def display_options(df):
 
                 # Make scatter plot
                 if group_selection != 'None':
-                        sns.scatterplot(x = x_selection, y = y_selection, data = df,
+                        to_plot = grid_response['data'].dropna()
+                        sns.scatterplot(x = x_selection, y = y_selection, data = to_plot,
                                         ax = ax, s = 100,
                                         hue = group_selection,
                                         palette = sns.color_palette(palette = palette_selection,
-                                                                    n_colors = df[group_selection].nunique()))
+                                                                    n_colors = to_plot[group_selection].nunique()))
+                        
                 else:
+                        to_plot = grid_response['data'].copy()
                         sns.scatterplot(x = x_selection, y = y_selection, data = df,
                                         ax = ax, s = 100)
 
-                ymin = df[y_selection].min()
-                ymax = df[y_selection].max()
+                ymin = to_plot[y_selection].min()
+                ymax = to_plot[y_selection].max()
                 yrange = ymax - ymin
+                        
+                xmin = to_plot[x_selection].min()
+                xmax = to_plot[x_selection].max()
+                xrange = xmax - xmin
 
                 # Rotate xlabels if data type is string
-                if df[x_selection].dtypes == 'object':
+                if to_plot[x_selection].dtypes == 'object':
                         plt.xticks(rotation = 90)
 
                 # Set x and y limits
                 else:
-                        xmin = df[x_selection].min()
-                        xmax = df[x_selection].max()
-                        xrange = xmax - xmin
-
                         #ax.set_xlim([xmin - 10*math.ceil(abs(xmin)), xmax*1.1])
                         #ax.set_ylim([ymin - 10*math.ceil(abs(ymin)), ymax*1.1])
                         ax.set_xlim([xmin - 0.2*xrange, xmax + 0.2*xrange])
@@ -148,15 +151,17 @@ def display_options(df):
                 anno_ls = []
                 selected = grid_response['selected_rows']
                 selected_df = pd.DataFrame(selected)
+                potential_annos = to_plot[anno_selection].tolist()
+                
                 for k, v in selected_df.iterrows():
-                        if v[x_selection] != 'nan':
+                        if v[x_selection] != 'nan' and v[anno_selection] in potential_annos:
                                 anno = ax.text(x = v[x_selection], y = v[y_selection],
                                                s = v[anno_selection], size = 10)
                                 anno_ls.append(anno)
                         
                 adjust_text(anno_ls, ax = ax)
 
-                plt.legend(bbox_to_anchor = (1.18, 1.))
+                plt.legend(loc = 'upper left', bbox_to_anchor = (1.01, 1.02), title = group_selection)
                 
                 st.pyplot(f)
 
@@ -184,7 +189,7 @@ def display_options(df):
                                 
 
                 plt.xticks(rotation = 90)
-                plt.legend(bbox_to_anchor = (1.01,1))
+                plt.legend(bbox_to_anchor = (1.01,1), title = group_selection)
                 st.pyplot(f)
                 
         if plot_type_choice == 'box':
@@ -197,9 +202,10 @@ def display_options(df):
                 anno_selection = st.sidebar.selectbox('Annotate by:', anno_menu)
 
                 # Make a boxplot
-                sns.boxplot(x = x_selection, y = y_selection, data = df,
+                to_plot = grid_response['data'].dropna()
+                sns.boxplot(x = x_selection, y = y_selection, data = to_plot,
                                 ax = ax, linewidth = 1, color = 'white', saturation = 1)
-                sns.swarmplot(x = x_selection, y = y_selection, data = df,
+                sns.swarmplot(x = x_selection, y = y_selection, data = to_plot,
                                 ax = ax, edgecolor = 'black', linewidth = 1, size = 8)
 
                 plt.xticks(rotation = 90)
@@ -227,7 +233,22 @@ def display_options(df):
                 x_selection = st.sidebar.selectbox('x axis:', x_menu)
                 bin_slider = st.slider('Number of bins:', 1, 35, 5)
 
-                # Make a histogram
+                # Round values to get general range
+                x_min = df[x_selection].min()
+                x_max = df[x_selection].max()
+                x_range = x_max - x_min
+                if x_range >= 1000:
+                        x_min = round(x_min, -2)
+                        x_max = round(x_max, -2)
+                        x_range = x_max-x_min
+                else:
+                        x_min = round(x_min)
+                        x_max = round(x_max)
+                        x_range = x_max-x_min
+
+                # Make histogram
+                bins = np.histogram_bin_edges(df[x_selection], bins=bin_slider)
+                print(bins)
                 sns.histplot(data = df, x = x_selection, bins = bin_slider)
                 st.pyplot(f)
 
