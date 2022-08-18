@@ -113,8 +113,9 @@ def display_options(df):
 
                 # Make scatter plot
                 if group_selection != 'None':
-                        to_plot = grid_response['data'].dropna()
-                        sns.scatterplot(x = x_selection, y = y_selection, data = to_plot,
+                        to_plot = grid_response['data'].dropna(subset = [x_selection, y_selection, group_selection], how = 'any')
+                        to_plot = to_plot[to_plot[group_selection]!='nan']
+                        g = sns.scatterplot(x = x_selection, y = y_selection, data = to_plot,
                                         ax = ax, s = 100,
                                         hue = group_selection,
                                         palette = sns.color_palette(palette = palette_selection,
@@ -122,7 +123,7 @@ def display_options(df):
                         
                 else:
                         to_plot = grid_response['data'].copy()
-                        sns.scatterplot(x = x_selection, y = y_selection, data = df,
+                        g = sns.scatterplot(x = x_selection, y = y_selection, data = df,
                                         ax = ax, s = 100)
 
                 ymin = to_plot[y_selection].min()
@@ -136,6 +137,7 @@ def display_options(df):
                 # Rotate xlabels if data type is string
                 if to_plot[x_selection].dtypes == 'object':
                         plt.xticks(rotation = 90)
+                        print(to_plot[x_selection].dtypes)
 
                 # Set x and y limits
                 else:
@@ -144,7 +146,10 @@ def display_options(df):
                         ax.set_xlim([xmin - 0.2*xrange, xmax + 0.2*xrange])
                         ax.set_ylim([ymin - 0.2*yrange, ymax + 0.2*yrange])
 
-                if '%' in y_selection:
+                        #ax.set_xlim([-595.24, 3710.04])
+                        #ax.set_ylim([-0.4412576956904136, 9.47076517150396])
+
+                if '%' in y_selection and ymax < 20:
                         ax.set_ylim([0, 100])
 
                 # Annotate data points
@@ -159,10 +164,13 @@ def display_options(df):
                                                s = v[anno_selection], size = 10)
                                 anno_ls.append(anno)
                         
-                adjust_text(anno_ls, ax = ax)
+                adjust_text(anno_ls, to_plot[x_selection].tolist(), to_plot[y_selection].tolist(),
+                            arrowprops=dict(arrowstyle="-", color='k', alpha = 0.5),
+                            ax = ax)
 
                 plt.legend(loc = 'upper left', bbox_to_anchor = (1.01, 1.02), title = group_selection)
-                
+                                
+
                 st.pyplot(f)
 
         if plot_type_choice == 'bar':
@@ -204,9 +212,10 @@ def display_options(df):
                 # Make a boxplot
                 to_plot = grid_response['data'].dropna()
                 sns.boxplot(x = x_selection, y = y_selection, data = to_plot,
-                                ax = ax, linewidth = 1, color = 'white', saturation = 1)
+                            ax = ax, linewidth = 1, color = 'white', saturation = 1)
+
                 sns.swarmplot(x = x_selection, y = y_selection, data = to_plot,
-                                ax = ax, edgecolor = 'black', linewidth = 1, size = 8)
+                              ax = ax, edgecolor = 'black', linewidth = 1, size = 8)
 
                 plt.xticks(rotation = 90)
                 tick_labels = ax.get_xticklabels()
@@ -224,7 +233,11 @@ def display_options(df):
                                                s = v[anno_selection], size = 10)
                                 anno_ls.append(anno)
                         
-                adjust_text(anno_ls, ax = ax)
+                all_x = [tick_dict[x] for x in to_plot[x_selection].tolist()]
+                adjust_text(anno_ls,
+                            all_x,
+                            to_plot[y_selection].tolist(),
+                            ax = ax)
                         
                 st.pyplot(f)
                         
