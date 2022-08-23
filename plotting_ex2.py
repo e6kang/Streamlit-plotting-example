@@ -126,13 +126,15 @@ def display_options(df):
                         g = sns.scatterplot(x = x_selection, y = y_selection, data = df,
                                         ax = ax, s = 100)
 
-                ymin = to_plot[y_selection].min()
-                ymax = to_plot[y_selection].max()
-                yrange = ymax - ymin
+                if to_plot[y_selection].dtypes != 'object':
+                        ymin = to_plot[y_selection].min()
+                        ymax = to_plot[y_selection].max()
+                        yrange = ymax - ymin
                         
-                xmin = to_plot[x_selection].min()
-                xmax = to_plot[x_selection].max()
-                xrange = xmax - xmin
+                if to_plot[x_selection].dtypes != 'object':
+                        xmin = to_plot[x_selection].min()
+                        xmax = to_plot[x_selection].max()
+                        xrange = xmax - xmin
 
                 # Rotate xlabels if data type is string
                 if to_plot[x_selection].dtypes == 'object':
