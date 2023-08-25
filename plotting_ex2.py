@@ -147,6 +147,7 @@ def display_options(df):
                         #ax.set_ylim([ymin - 10*math.ceil(abs(ymin)), ymax*1.1])
                         ax.set_xlim([xmin - 0.2*xrange, xmax + 0.2*xrange])
                         ax.set_ylim([ymin - 0.2*yrange, ymax + 0.2*yrange])
+                        
 
                         #ax.set_xlim([-595.24, 3710.04])
                         #ax.set_ylim([-0.4412576956904136, 9.47076517150396])
@@ -205,19 +206,32 @@ def display_options(df):
         if plot_type_choice == 'box':
                 x_menu = alphabetic_columns
                 y_menu = numeric_columns
+                group_menu = short_alpha_columns
+                pal_menu = [pal_1, pal_2, pal_3, pal_4, pal_5, pal_6]
                 anno_menu = alphabetic_columns
                 
                 x_selection = st.sidebar.selectbox('x axis:', x_menu)
                 y_selection = st.sidebar.selectbox('y axis:', y_menu)
+                group_selection = st.sidebar.selectbox('Group by:', group_menu)
+                palette_selection = st.sidebar.selectbox('Color palette:', pal_menu)
                 anno_selection = st.sidebar.selectbox('Annotate by:', anno_menu)
 
                 # Make a boxplot
-                to_plot = grid_response['data'].dropna()
-                sns.boxplot(x = x_selection, y = y_selection, data = to_plot,
-                            ax = ax, linewidth = 1, color = 'white', saturation = 1)
+                to_plot = grid_response['data'].dropna(subset = [x_selection, y_selection, group_selection], how = 'any')
+                if group_selection == 'None':
+                        sns.boxplot(x = x_selection, y = y_selection, data = to_plot,
+                                    ax = ax, linewidth = 1, color = 'white', saturation = 1)
 
-                sns.swarmplot(x = x_selection, y = y_selection, data = to_plot,
-                              ax = ax, edgecolor = 'black', linewidth = 1, size = 8)
+                        sns.swarmplot(x = x_selection, y = y_selection, data = to_plot,
+                                      ax = ax, edgecolor = 'black', linewidth = 1, size = 8)
+                else:
+                        sns.boxplot(x = x_selection, y = y_selection, data = to_plot,
+                                    ax = ax, linewidth = 1, color = 'white', saturation = 1)
+                        
+                        sns.swarmplot(x = x_selection, y = y_selection, data = to_plot,
+                                      hue = group_selection, size = 8,
+                                      ax = ax)
+                        plt.legend(loc = 'upper left', bbox_to_anchor = (1.01, 1.02), title = group_selection)
 
                 plt.xticks(rotation = 90)
                 tick_labels = ax.get_xticklabels()
